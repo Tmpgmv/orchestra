@@ -1,0 +1,22 @@
+spring:
+  application:
+    name:sentiment-app
+
+
+inference4j:
+  nlp:
+    text-classifier:
+      enabled: true
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus  # Явно открываем prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: sentiment-app  # Добавит тег к метрикам, удобно для фильтрации в Grafana
