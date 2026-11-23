@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentiment-app
+  labels:
+    app: sentiment-app
+spec:
+  replicas: 3  # 3 реплики
+  selector:
+    matchLabels:
+      app: sentiment-app
+  template:
+    metadata:
+      labels:
+        app: sentiment-app
+    spec:
+      containers:
+        - name: sentiment-app
+          image: sentiment-app:local  # Имя локального образа
+          imagePullPolicy: Never     # Запрещает K8s искать образ в Docker Hub
+          ports:
+            - containerPort: 8080
+          # Важно для HPA: без requests.cpu автоскейлинг не будет работать
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "500m"
+          # Монтируем кэш модели, как вы делали в Docker, чтобы не качать её заново
+          volumeMounts:
+            - name: model-cache
+              mountPath: /app/model-cache
+      volumes:
+        - name: model-cache
+          emptyDir: {}
